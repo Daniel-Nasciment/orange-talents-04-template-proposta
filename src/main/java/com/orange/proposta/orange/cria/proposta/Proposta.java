@@ -2,21 +2,25 @@ package com.orange.proposta.orange.cria.proposta;
 
 import java.math.BigDecimal;
 
-import javax.validation.constraints.Email;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 
-import com.orange.proposta.orange.validation.CPForCNPJ;
+@Entity
+public class Proposta {
 
-public class NovaPropostaRequest {
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
 	@NotBlank
-	@CPForCNPJ
 	private String documento;
 
 	@NotBlank
-	@Email
 	private String email;
 
 	@NotBlank
@@ -29,7 +33,12 @@ public class NovaPropostaRequest {
 	@Positive
 	private BigDecimal salario;
 
-	public NovaPropostaRequest(@NotBlank String documento, @NotBlank @Email String email, @NotBlank String nome,
+	@Deprecated
+	public Proposta() {
+
+	}
+
+	public Proposta(@NotBlank String documento, @NotBlank String email, @NotBlank String nome,
 			@NotBlank String endereco, @NotNull @Positive BigDecimal salario) {
 		super();
 		this.documento = documento;
@@ -39,12 +48,8 @@ public class NovaPropostaRequest {
 		this.salario = salario;
 	}
 
-	public String getNome() {
-		return nome;
-	}
-
-	public Proposta toModel() {
-		return new Proposta(this.documento, this.email, this.nome, this.endereco, this.salario);
+	public Long getId() {
+		return id;
 	}
 
 }
