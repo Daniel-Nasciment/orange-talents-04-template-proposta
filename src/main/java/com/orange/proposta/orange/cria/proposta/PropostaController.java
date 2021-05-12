@@ -23,6 +23,10 @@ public class PropostaController {
 	public ResponseEntity<?> criaProposta(@RequestBody @Valid NovaPropostaRequest request) {
 
 		Proposta proposta = request.toModel();
+		
+		if(propostaRepository.findByDocumento(request.getDocumento()).isPresent()) {
+			return ResponseEntity.unprocessableEntity().body("Você já realizou uma proposta");
+		}
 
 		propostaRepository.save(proposta);
 
