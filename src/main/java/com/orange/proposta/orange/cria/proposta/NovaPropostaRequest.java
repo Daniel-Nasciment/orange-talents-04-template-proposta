@@ -47,4 +47,10 @@ public class NovaPropostaRequest {
 		return documento;
 	}
 
+	public boolean localizaDocIgual(PropostaRepository propostaRepository) {
+		boolean localizado = propostaRepository.findByDocumento(this.documento).isPresent();
+	
+		return localizado;
+	}
+
 }

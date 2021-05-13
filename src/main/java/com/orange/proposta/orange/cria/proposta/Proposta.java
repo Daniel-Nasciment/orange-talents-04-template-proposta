@@ -3,12 +3,16 @@ package com.orange.proposta.orange.cria.proposta;
 import java.math.BigDecimal;
 
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
+
+import com.orange.proposta.orange.consulta.dados.StatusAnalisado;
 
 @Entity
 public class Proposta {
@@ -33,6 +37,10 @@ public class Proposta {
 	@Positive
 	private BigDecimal salario;
 
+	// Segundo o que pede a FEATURE o que dever ser salvo é o conteudo desse ENUM
+	@Enumerated(EnumType.STRING)
+	private StatusAnalisado status;
+
 	@Deprecated
 	public Proposta() {
 
@@ -50,6 +58,36 @@ public class Proposta {
 
 	public Long getId() {
 		return id;
+	}
+
+	public String getDocumento() {
+		return documento;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public String getNome() {
+		return nome;
+	}
+
+	public String getEndereco() {
+		return endereco;
+	}
+
+	public BigDecimal getSalario() {
+		return salario;
+	}
+
+	public StatusAnalisado getStatus() {
+		return status;
+	}
+
+	// O SET É PASSADO DENTRO DO MEU CONTROLLER
+
+	public void setStatus(StatusAnalisado status) {
+		this.status = status;
 	}
 
 }
