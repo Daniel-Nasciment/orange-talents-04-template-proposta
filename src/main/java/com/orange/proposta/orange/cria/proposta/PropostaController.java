@@ -29,8 +29,8 @@ public class PropostaController {
 	@Autowired
 	private PropostaRepository propostaRepository;
 
-	// FAZER A INJEÇÃO DA DEPENDENCIA DO FEIGN 
-	
+	// FAZER A INJEÇÃO DA DEPENDENCIA DO FEIGN
+
 	@Autowired
 	private ConsultaDadosProposta consultaDadosProposta;
 
@@ -54,29 +54,29 @@ public class PropostaController {
 		propostaRepository.save(proposta);
 
 		// Preciso de uma proposta para montar uma solicitação de consulta
-		// A partir da PROPOSTA salva eu preencho a ConsultaRequest baseado no que ela pede
+		// A partir da PROPOSTA salva eu preencho a ConsultaRequest baseado no que ela
+		// pede
 		ConsultaRequest consultaRequest = new ConsultaRequest(proposta.getDocumento(), proposta.getNome(),
 				proposta.getId());
 
 		try {
 
-		// Com a injeção do FEIGN eu chamo para utilizar o seu métódo "analisaDados" passando uma ConsultaReques 
+			// Com a injeção do FEIGN eu chamo para utilizar o seu métódo "analisaDados"
+			// passando uma ConsultaReques
 			ConsultaResponse consultaResponse = consultaDadosProposta.analisaDados(consultaRequest);
-		
-		// Só entrara dentro do TRY se for SEM_RESTRICAO
+
+			// Só entrara dentro do TRY se for SEM_RESTRICAO
 			proposta.setStatus(StatusAnalisado.ELEGIVEL);
 
-			propostaRepository.save(proposta);
 		} catch (FeignException.UnprocessableEntity e) {
 
-		// Só entra no catch se for COM_RESTRICAO
-			
-			System.out.println("Ocorreu um erro inesperado.");
-			proposta.setStatus(StatusAnalisado.NAO_ELEGIVEL);
-			propostaRepository.save(proposta);
+			// Só entra no catch se for COM_RESTRICAO
 
-			return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).build();
+			proposta.setStatus(StatusAnalisado.NAO_ELEGIVEL);
+
 		}
+
+		propostaRepository.save(proposta);
 
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(proposta.getId())
 				.toUri();

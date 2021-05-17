@@ -5,6 +5,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 //Essa chave está alocada no meu application.properties
+//Geralmente quando trabalhamos com aplicação Cliente devemos ter o sufixo @Feign
+//
 @FeignClient(value = "analises", url = "${analises.host}")
 public interface ConsultaDadosProposta {
 

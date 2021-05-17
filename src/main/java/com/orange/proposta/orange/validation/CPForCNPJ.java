@@ -11,11 +11,11 @@ import java.lang.annotation.*;
 
 @Documented
 @Target({ ElementType.FIELD })
-@Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = {})
-@ConstraintComposition(CompositionType.OR)
 @CPF
+@ConstraintComposition(CompositionType.OR)
 @CNPJ
+@Retention(RetentionPolicy.RUNTIME)
 public @interface CPForCNPJ {
 	String message() default "Documento inválido";
 
