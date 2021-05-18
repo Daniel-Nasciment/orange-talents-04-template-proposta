@@ -8,10 +8,12 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToOne;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 
+import com.orange.proposta.orange.cartoes.Cartao;
 import com.orange.proposta.orange.consulta.dados.StatusAnalisado;
 
 @Entity
@@ -40,6 +42,9 @@ public class Proposta {
 	// Segundo o que pede a FEATURE o que dever ser salvo é o conteudo desse ENUM
 	@Enumerated(EnumType.STRING)
 	private StatusAnalisado status;
+
+	@OneToOne
+	private Cartao cartao;
 
 	@Deprecated
 	public Proposta() {
@@ -84,10 +89,18 @@ public class Proposta {
 		return status;
 	}
 
+	public Cartao getCartao() {
+		return cartao;
+	}
+
 	// O SET É PASSADO DENTRO DO MEU CONTROLLER
 
 	public void setStatus(StatusAnalisado status) {
 		this.status = status;
+	}
+
+	public void setCartao(Cartao cartao) {
+		this.cartao = cartao;
 	}
 
 }

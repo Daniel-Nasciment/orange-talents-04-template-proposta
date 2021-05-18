@@ -5,7 +5,6 @@ import java.net.URI;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,9 +14,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import com.orange.proposta.orange.consulta.dados.ConsultaDadosProposta;
+import com.orange.proposta.orange.cartoes.CartoesClient;
+import com.orange.proposta.orange.consulta.dados.AnaliseDadosClient;
 import com.orange.proposta.orange.consulta.dados.ConsultaRequest;
-import com.orange.proposta.orange.consulta.dados.ConsultaResponse;
 import com.orange.proposta.orange.consulta.dados.StatusAnalisado;
 
 import feign.FeignException;
@@ -29,10 +28,11 @@ public class PropostaController {
 	@Autowired
 	private PropostaRepository propostaRepository;
 
-	// FAZER A INJEÇÃO DA DEPENDENCIA DO FEIGN
+	@Autowired
+	private AnaliseDadosClient consultaDadosProposta;
 
 	@Autowired
-	private ConsultaDadosProposta consultaDadosProposta;
+	private CartoesClient cartoesClient;
 
 	@GetMapping(value = "/{id}")
 	public NovaPropostaResponse buscaProposta(@PathVariable Long id) {
@@ -47,6 +47,7 @@ public class PropostaController {
 
 		Proposta proposta = request.toModel();
 
+		// Validação de documentos iguais
 		if (request.localizaDocIgual(propostaRepository)) {
 			return ResponseEntity.unprocessableEntity().body("Você já realizou uma proposta");
 		}
@@ -63,7 +64,7 @@ public class PropostaController {
 
 			// Com a injeção do FEIGN eu chamo para utilizar o seu métódo "analisaDados"
 			// passando uma ConsultaReques
-			ConsultaResponse consultaResponse = consultaDadosProposta.analisaDados(consultaRequest);
+			consultaDadosProposta.analisaDados(consultaRequest);
 
 			// Só entrara dentro do TRY se for SEM_RESTRICAO
 			proposta.setStatus(StatusAnalisado.ELEGIVEL);
