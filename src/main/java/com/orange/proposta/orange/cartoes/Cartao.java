@@ -3,12 +3,16 @@ package com.orange.proposta.orange.cartoes;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
 
+import com.orange.proposta.orange.bloqueio.Bloqueio;
 import com.orange.proposta.orange.cria.proposta.Proposta;
 
 @Entity
@@ -25,6 +29,12 @@ public class Cartao {
 	@OneToOne(mappedBy = "cartao")
 	private Proposta proposta;
 
+	@OneToOne(cascade = CascadeType.MERGE)
+	private Bloqueio bloqueio;
+
+	@Enumerated(value = EnumType.STRING)
+	private StatusCartao status = StatusCartao.ATIVO;
+
 	private LocalDateTime emitidoEm = LocalDateTime.now();
 
 	@Deprecated
@@ -39,4 +49,15 @@ public class Cartao {
 		this.proposta = proposta;
 	}
 
+	public boolean bloqueado() {
+		return this.status.equals(StatusCartao.BLOQUEADO);
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public String getNumeroCartao() {
+		return numeroCartao;
+	}
 }
