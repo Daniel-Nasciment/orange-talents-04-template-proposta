@@ -5,7 +5,7 @@ public class BloqueioResponse {
 	private StatusCartao resultado;
 
 	public BloqueioResponse() {
-		}
+	}
 
 	public StatusCartao getResultado() {
 		return resultado;

@@ -1,7 +1,5 @@
 package com.orange.proposta.orange.bloqueio;
 
-import java.util.Optional;
-
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +15,8 @@ import com.orange.proposta.orange.cartoes.BloqueioResponse;
 import com.orange.proposta.orange.cartoes.Cartao;
 import com.orange.proposta.orange.cartoes.CartaoRepository;
 import com.orange.proposta.orange.cartoes.CartoesClient;
+
+import feign.FeignException;
 
 @RestController
 @RequestMapping("/bloqueios")
@@ -35,18 +35,20 @@ public class BloqueioController {
 	public ResponseEntity<?> bloqueiaCartao(@PathVariable("idCartao") Long idCartao, HttpServletRequest servletRequest,
 			@RequestHeader(value = "User-Agent") String userAgent) {
 
-		Optional<Cartao> possivelCartao = cartaoRepository.findById(idCartao);
+		Cartao possivelCartao = cartaoRepository.findById(idCartao).get();
 
-		return possivelCartao.map(cartaoEncontrado -> {
-			if (cartaoEncontrado.bloqueado()) {
-				return ResponseEntity.unprocessableEntity().body("Cartão já bloqueado.");
-			}
-			Bloqueio novoBloqueio = new Bloqueio(servletRequest.getRemoteAddr(), userAgent, cartaoEncontrado);
-			BloqueioResponse bloqueioFeignResponse = cartoesClient.bloquearCartao(
-                    cartaoEncontrado.getNumeroCartao(), new BloqueioRequest());
+		Bloqueio novoBloqueio = new Bloqueio(servletRequest.getRemoteAddr(), userAgent, possivelCartao);
+		BloqueioResponse bloqueioFeignResponse = cartoesClient.bloquearCartao(possivelCartao.getNumeroCartao(),
+				new BloqueioRequest());
+		try {
 			bloqueioRepository.save(novoBloqueio);
-			return ResponseEntity.ok().build();
-		}).orElseGet(() -> ResponseEntity.notFound().build());
+			return ResponseEntity.ok(bloqueioFeignResponse.getResultado().toString());
+
+		} catch (FeignException.UnprocessableEntity e) {
+			e.printStackTrace();
+		}
+
+		return ResponseEntity.unprocessableEntity().build();
 	}
 
 }
