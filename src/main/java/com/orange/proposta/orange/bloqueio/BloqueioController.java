@@ -15,6 +15,7 @@ import com.orange.proposta.orange.cartoes.BloqueioResponse;
 import com.orange.proposta.orange.cartoes.Cartao;
 import com.orange.proposta.orange.cartoes.CartaoRepository;
 import com.orange.proposta.orange.cartoes.CartoesClient;
+import com.orange.proposta.orange.cartoes.StatusCartao;
 
 import feign.FeignException;
 
@@ -41,6 +42,7 @@ public class BloqueioController {
 		BloqueioResponse bloqueioFeignResponse = cartoesClient.bloquearCartao(possivelCartao.getNumeroCartao(),
 				new BloqueioRequest());
 		try {
+			possivelCartao.setStatus(StatusCartao.BLOQUEADO);
 			bloqueioRepository.save(novoBloqueio);
 			return ResponseEntity.ok(bloqueioFeignResponse.getResultado().toString());
 

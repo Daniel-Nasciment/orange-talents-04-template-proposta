@@ -17,4 +17,7 @@ public interface CartoesClient {
 	public BloqueioResponse bloquearCartao(@PathVariable("id") String idCartao,
 			@RequestBody BloqueioRequest request);
 
+	@PostMapping(value = "/{id}/avisos")
+	public void avisoViagem(@PathVariable("id") String idCartao, @RequestBody AvisoViagemFeignRequest request);
+	
 }

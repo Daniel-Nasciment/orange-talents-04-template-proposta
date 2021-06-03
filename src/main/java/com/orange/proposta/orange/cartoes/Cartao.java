@@ -49,6 +49,14 @@ public class Cartao {
 		this.proposta = proposta;
 	}
 
+	public StatusCartao getStatus() {
+		return status;
+	}
+
+	public void setStatus(StatusCartao status) {
+		this.status = status;
+	}
+
 	public boolean bloqueado() {
 		return this.status.equals(StatusCartao.BLOQUEADO);
 	}
