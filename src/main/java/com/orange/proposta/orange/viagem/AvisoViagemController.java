@@ -1,10 +1,12 @@
 package com.orange.proposta.orange.viagem;
 
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import org.aspectj.lang.reflect.NoSuchAdviceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,6 +20,7 @@ import com.orange.proposta.orange.cartoes.AvisoViagemFeignRequest;
 import com.orange.proposta.orange.cartoes.Cartao;
 import com.orange.proposta.orange.cartoes.CartaoRepository;
 import com.orange.proposta.orange.cartoes.CartoesClient;
+import com.orange.proposta.orange.exception.ExceptionHandler;
 
 @RestController
 @RequestMapping(value = "/avisos")
@@ -39,17 +42,17 @@ public class AvisoViagemController {
 
 		Optional<Cartao> possivelCartao = cartaoReposiory.findById(idCartao);
 
-		if(possivelCartao.get().bloqueado() || !possivelCartao.isPresent()) {
+		if (possivelCartao.get().bloqueado() || !possivelCartao.isPresent()) {
 			return ResponseEntity.badRequest().build();
 		}
-		
+
 		AvisoViagem avisoViagem = request.toModel(servletRequest, userAgent, possivelCartao.get());
 
 		cartoesClient.avisoViagem(possivelCartao.get().getNumeroCartao(), new AvisoViagemFeignRequest(avisoViagem));
 
 		avisoViagemRepository.save(avisoViagem);
 
-		return ResponseEntity.ok("Funcionou!");
+		return ResponseEntity.ok(new AvisoViagemResponse());
 	}
 
 }
