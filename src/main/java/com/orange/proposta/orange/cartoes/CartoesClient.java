@@ -19,5 +19,7 @@ public interface CartoesClient {
 
 	@PostMapping(value = "/{id}/avisos")
 	public void avisoViagem(@PathVariable("id") String idCartao, @RequestBody AvisoViagemFeignRequest request);
-	
+
+	@PostMapping(value = "/{id}/carteiras")
+	public CarteiraFeignResponse associaCarteira(@PathVariable("id") String idCartao, @RequestBody CarteiraFeignRequest request);
 }
