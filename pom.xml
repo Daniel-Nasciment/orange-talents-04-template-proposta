@@ -72,6 +72,11 @@
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-openfeign</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>io.opentracing.contrib</groupId>
+			<artifactId>opentracing-spring-jaeger-starter</artifactId>
+			<version>3.3.1</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>

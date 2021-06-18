@@ -20,6 +20,8 @@ import com.orange.proposta.orange.consulta.dados.ConsultaRequest;
 import com.orange.proposta.orange.consulta.dados.StatusAnalisado;
 
 import feign.FeignException;
+import io.opentracing.Span;
+import io.opentracing.Tracer;
 
 @RestController
 @RequestMapping("/propostas")
@@ -34,6 +36,15 @@ public class PropostaController {
 	@Autowired
 	private CartoesClient cartoesClient;
 
+	private Tracer tracer;
+
+	public PropostaController(PropostaRepository propostaRepository, CartoesClient cartoesClient, Tracer tracer) {
+		super();
+		this.propostaRepository = propostaRepository;
+		this.cartoesClient = cartoesClient;
+		this.tracer = tracer;
+	}
+
 	@GetMapping(value = "/{id}")
 	public NovaPropostaResponse buscaProposta(@PathVariable Long id) {
 
@@ -44,6 +55,14 @@ public class PropostaController {
 
 	@PostMapping
 	public ResponseEntity<?> criaProposta(@RequestBody @Valid NovaPropostaRequest request) {
+
+		Span activeSpan = tracer.buildSpan("meunovospan").start();
+		activeSpan.setTag("user.email", "email@teste.com");
+		String userEmail = activeSpan.getBaggageItem("user.email");
+		activeSpan.setBaggageItem("user.email", userEmail);
+		activeSpan.log("Meu log");
+
+		activeSpan.finish();
 
 		Proposta proposta = request.toModel();
 
@@ -69,9 +88,11 @@ public class PropostaController {
 			// Só entrara dentro do TRY se for SEM_RESTRICAO
 			proposta.setStatus(StatusAnalisado.ELEGIVEL);
 
-		} catch (FeignException.UnprocessableEntity e) {
+		} catch (FeignException e) {
 
 			// Só entra no catch se for COM_RESTRICAO
+
+			e.printStackTrace();
 
 			proposta.setStatus(StatusAnalisado.NAO_ELEGIVEL);
 
